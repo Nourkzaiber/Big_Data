@@ -1,0 +1,4 @@
+select state, count(is_open) as closed from selected_dataset_business
+where is_open=0 
+group by state
+order by closed desc ;

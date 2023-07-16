@@ -1,0 +1,15 @@
+metadata = LOAD '/user/maria_dev/projekt/selected_dataset_user.json' using JsonLoader
+('user_id:chararray, name:chararray, review_count:int, yelping_since:chararray');
+
+-- Extrahiere das Jahr aus der Spalte 'yelping_since'
+metadata_year = FOREACH metadata GENERATE user_id, GetYear(ToDate(yelping_since, 'yyyy-MM-dd HH:mm:ss')) AS year;
+
+-- Gruppiere die Daten nach dem Jahr und zähle die Anzahl der Nutzer in jedem Jahr
+user_count_by_year = GROUP metadata_year BY year;
+user_count = FOREACH user_count_by_year GENERATE group AS year, COUNT(metadata_year) AS user_count;
+
+-- Sortiere die Ergebnisse nach dem Jahr
+sorted_user_count = ORDER user_count BY year;
+
+-- Ausgabe der Ergebnisse
+DUMP sorted_user_count;
